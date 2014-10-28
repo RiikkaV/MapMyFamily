@@ -14,13 +14,16 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int text=0x7f060000;
+        public static final int locationView=0x7f060000;
+        public static final int serverConnectionView=0x7f060001;
     }
     public static final class layout {
         public static final int main_layout=0x7f030000;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int waitingForConnection=0x7f040002;
+        public static final int waitingForLocation=0x7f040001;
     }
     public static final class style {
         /** 
