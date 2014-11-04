@@ -1,0 +1,21 @@
+<resources>
+
+    <string name="app_name">MapMyFamily</string>
+    <string name="waitingForLocation">Paikantaa&#8230;</string>
+    <string name="waitingForConnection">Yhdistää&#8230;</string>
+    <string name="connectionClosed">Yhteys katkennut</string>
+    <string name="askToEnableNetworkConnection">Ole hyvä, laita wi-fi tai mobiilidata päälle</string>
+    <string name="currentLocationHeader">SIJAINTISI</string>
+    <string name="currentLocationTimeHeader">AIKA</string>
+    <string name="currentLocationProviderHeader">PAIKANNUSTYYPPI</string>
+    <string name="currentLocationAccuracyHeader">TARKKUUS</string>
+     <string name="accuracyMeters">metriä</string>
+    <string name="providerEnabled">päällä</string>
+    <string name="providerDisabled">pois päältä</string>
+    <string name="gpsLocationProvider">GPS paikannus</string>
+    <string name="networkLocationProvider">verkkopaikannus</string>
+    <string name="websocketConnection">WebSocket</string>
+    <string name="locationInfo">PAIKANNUS</string>
+    <string name="networkInfo">VERKKOYHTEYS</string>
+    
+</resources>

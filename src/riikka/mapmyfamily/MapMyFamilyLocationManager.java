@@ -14,12 +14,11 @@ import android.util.Log;
 
 /**
  * This class requires periodically GPS position from Android::LocationManager 
- * Notifies MapMyFamilyService when location has changed or GPS has been disabled.
+ * Notifies MapMyFamilyService when location has changed.
  * 
- * TODO: 
- * - keep track from the current location provider
+ * 	TODO:
  * - get minTime for requests from settings
- * - set client name, phonenumber?
+ * - set client name, phonenumber/imei/generated UID3?
  * 
  */
  
@@ -28,6 +27,7 @@ import android.util.Log;
 	 LocationManager locManager;
 	 LocationManagerObserver observer;
 	 Context myContext;
+
 	 public static final String LOG_TAG = "MapMyFamilyLocationManager";
 	 
 	 /**
@@ -50,8 +50,13 @@ import android.util.Log;
 	  * it is enabled it might not provide location data.
 	  */
 	 public void StartTracking(){
-		 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, this);
-		 locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, this);
+		 if( null != locManager.getProvider(LocationManager.GPS_PROVIDER ) ){
+			 locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, this);
+		 }
+		 if( null != locManager.getProvider(LocationManager.NETWORK_PROVIDER ) ){
+			 locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, this); 
+		 }
+		 
 	 }
 
 	/**
@@ -72,10 +77,11 @@ import android.util.Log;
 
 	/**
 	 * Creates JSON from location information
-	 * TODO: add to utils package
+	 *
 	 */
 	private JSONObject createJSON(Location location) {
 		JSONObject object = new JSONObject();
+		
 		
 		  try {
 			    object.put("latitude", location.getLatitude());
@@ -83,7 +89,7 @@ import android.util.Log;
 			    object.put("accuracy", location.getAccuracy());
 			    object.put("event", "location");
 			    object.put("time", location.getTime());
-			    object.put("client", "mapmyfamily");
+			    object.put("client", "mobile");
 			    object.put("locationProvider", location.getProvider());
 			  } catch (JSONException e) {
 				object = null;

@@ -3,41 +3,41 @@ package riikka.mapmyfamily;
 /**
  * MapMyFamilyActivity
  * 
- * TODO: 
- * - add hardcoded strings to resources (localized?)
- * - create own class for handling notifications
- * - create utility package?
- * - modify layout: add information such as current location provider, events sent to server (status/time) NOTE! 
- * 		requires changes on the server side, change view items colors to indicate status 
- * 		(i.e. red when network connection is not enabled?), landscape layout support, layout for bigger screens,
- * 		geocode coordinates to address?
+ * The main (and only) activity. If layout for small screens is in use
+ * creates fragments and actionbar/viewpager for navigating between fragments.
+ * Otherwise both fragments are cretead through the main_layout.xml (layout-large).
  * 
+ * Creates also LocationManager for obtaining the current location and MapMyFamilyService to send
+ * location data to the server.
  */
 
-import java.util.Calendar;
-import org.json.JSONException;
+import java.util.ArrayList;
 import org.json.JSONObject;
-
-import android.app.Activity;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.widget.TextView;
 
 
-public class MapMyFamilyActivity extends Activity implements LocationManagerObserver, ServiceObserver{
+public class MapMyFamilyActivity extends FragmentActivity implements LocationManagerObserver, ServiceObserver{
 	
 	private final String LOG_TAG = "MapMyFamilyActivity";
 	private MapMyFamilyService mLocationSenderService;
 	MapMyFamilyLocationManager locManager;
 	boolean mIsBound;
-	private TextView locationView;
-	private TextView connectionView;
-	
+	LocationFragment locationFragment=null;
+	NetworkFragment networkFragment=null;
+	FragmentAdapter mAdapter;
+    ViewPager mPager;
+	 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
         	mLocationSenderService = ((MapMyFamilyService.LocalBinder)service).getService();
@@ -70,7 +70,7 @@ public class MapMyFamilyActivity extends Activity implements LocationManagerObse
         
 		Intent serviceIntent = new Intent(getApplicationContext(), MapMyFamilyService.class);
 	    startService(serviceIntent);
-	    
+
 		 // create location manager
 	    if( null == locManager ){
 	        Context context = getBaseContext();	
@@ -78,9 +78,74 @@ public class MapMyFamilyActivity extends Activity implements LocationManagerObse
 			locManager.setObserver( this );
 			locManager.StartTracking();
 	    }
-	    locationView = (TextView)findViewById(R.id.locationView);
-	    connectionView = (TextView)findViewById(R.id.serverConnectionView);
-        
+	    
+	    // create fragments if this is single fragment layout (small screen sizes)
+	    if (findViewById(R.id.singleFragmentLayout) != null) {
+	    	
+            if (savedInstanceState != null) {
+                return;
+            }
+            
+    	    final ActionBar actionBar = getActionBar();
+    	    // specify that action bar should display tabs
+    	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+    	    
+    	    mAdapter = new FragmentAdapter( getSupportFragmentManager() );
+    	    
+            // Create fragments
+            locationFragment = new LocationFragment();
+            networkFragment = new NetworkFragment();
+            
+		    ArrayList<Fragment> fragments = new ArrayList<Fragment>(2);
+		    fragments.add( locationFragment );
+		    fragments.add( networkFragment );
+		    mAdapter.setFragments( fragments );
+		    
+    	    mPager = (ViewPager) findViewById(R.id.pager);
+    	    mPager.setAdapter( mAdapter );
+
+			ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+				@Override
+				public void onTabReselected(Tab tab,
+						android.app.FragmentTransaction ft) {
+				}
+
+				@Override
+				public void onTabSelected(Tab tab,
+						android.app.FragmentTransaction ft) {
+			        int position = tab.getPosition();
+		            mPager.setCurrentItem(position);
+				}
+
+				@Override
+				public void onTabUnselected(Tab tab,
+						android.app.FragmentTransaction ft) {
+				}
+			};
+			
+			;
+
+		    String[] tabs = {
+		    		this.getString( R.string.locationInfo ), this.getString( R.string.networkInfo )
+		    };
+			
+		    for (int i = 0; i < tabs.length; i++) {
+		        actionBar.addTab(
+		               actionBar.newTab()
+		                .setText( tabs[i] )
+		                .setTabListener( tabListener ));
+		    }
+	    
+    	    // With swipe change the fragment
+    	   mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+    	        @Override
+    	        public void onPageSelected(int position) {
+    	            actionBar.setSelectedNavigationItem(position);
+    	        }
+    	    });
+		    
+
+	    }
     }
     @Override
     protected void onStart() {
@@ -90,7 +155,6 @@ public class MapMyFamilyActivity extends Activity implements LocationManagerObse
             Intent bindIntent = new Intent(getApplicationContext(), MapMyFamilyService.class);
             mIsBound = bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);         	
         }
-
     }
     
     @Override
@@ -115,65 +179,40 @@ public class MapMyFamilyActivity extends Activity implements LocationManagerObse
     public void notifyLocationChanged( JSONObject message ){
     	
     	if( null != mLocationSenderService && mIsBound ){
-    		
-    		mLocationSenderService.sendData( message.toString() );
-    		
-        	Object longitude=null;
-        	Object latitude=null;
-        	Object timestamp=null;
-        	  
-        	try{
-        		longitude = message.get( "latitude" );
-        		latitude = message.get( "longitude" );
-        		timestamp = message.get( "time" );
-        	}catch ( JSONException e){
-        		Log.i(LOG_TAG, "JSON exception");
-        	}
-
-        	if (longitude != null && null != latitude && null != timestamp) {
-        		
-        		String localTime = parseUTCTime( timestamp.toString() );
-        		locationView.setText("Location received: " + longitude.toString() + "," 
-        				+ latitude.toString() + " " + localTime);
-        	}   		
+    		mLocationSenderService.sendData( message.toString() );	
     	}
     	
+    	if( null != locationFragment && locationFragment.isVisible() ){
+        	// pass the message to the location fragment
+        	locationFragment.updatecurrentLocation( message );
+    	}
     }
 
-	private String parseUTCTime( String timestamp ) {
-		String returnTime;
-		
-		long timeInMilliseconds = Long.valueOf( timestamp );
-		Calendar locationDate = Calendar.getInstance();
-		locationDate.setTimeInMillis( timeInMilliseconds );
-		int date = locationDate.get(Calendar.DATE);
-		int month = locationDate.get(Calendar.MONTH) + 1;
-		int year = locationDate.get(Calendar.YEAR);
-		int hour = locationDate.get(Calendar.HOUR_OF_DAY);
-		int minute = locationDate.get(Calendar.MINUTE);
-		returnTime = date + "." + month + "." + year + " " + hour + ":" + minute;
-		
-		return returnTime;
+	@Override
+	public void notifyLocationProviderChanged( String event ) {
+    	// TODO: or toast!
+		if( null != locationFragment && locationFragment.isVisible() ){
+        	// pass the message to the location fragment
+        	locationFragment.locationProviderChanged ( event );
+    	}
 	}
 
 	@Override
-	public void notifyLocationProviderChanged(String event) {
-		locationView.setText(event);
+	public void socketConnectionStatusChanged( NetworkStatus status ) {
+		if( null != networkFragment && networkFragment.isVisible() ){
+        	// pass the message to the location fragment
+			networkFragment.networkStatusChanged( status );
+    	}
 	}
 
-	@Override
-	public void socketConnectionStatusChanged(String status) {
-		connectionView.setText("WebSocket status changed:" + status );
-		
-	}
 
 	@Override
-	public void networkConnectionDisabled() {
-		connectionView.setText("Please, enable network connection");
+	public void messageReceived( String payload ) {
+		// TODO: messages from server not ready yet
+		if( null != networkFragment ){
+        	
+    	}
 	}
 
-	@Override
-	public void locationSentToServer() {
-		locationView.setText("Location sent to server");
-	}
+
 }

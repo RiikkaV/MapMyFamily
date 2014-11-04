@@ -6,9 +6,6 @@
 package riikka.mapmyfamily;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -28,9 +25,8 @@ import de.tavendo.autobahn.WebSocketHandler;
  * Sends coordinates to the MapMyFamily server whenever needed.
  * 
  * TODO:
- * - check network connection -> ask user to enable wifi or mobile data if not enabled
  * - get server URI from settings
- * - add location string to resources ("mapmyfamily.Location")
+ * - secure websocket connection??
  */
 public class MapMyFamilyService extends Service {
 
@@ -39,7 +35,9 @@ public class MapMyFamilyService extends Service {
     private ConnectivityManager connMgr = null;
     private WebSocketConnection mConnection = new WebSocketConnection();
     ConnectivityManager mConnManager;
-    private final String wsuri = "ws://XXXXXXXXXXXXXXX";
+    // for debug, localhost
+    //private final String wsuri = "ws://10.0.2.2:5000";
+    private final String wsuri = "ws://mapmyfamily.herokuapp.com";
     private final IBinder mBinder = new LocalBinder();
     
     public class LocalBinder extends Binder {
@@ -69,7 +67,7 @@ public class MapMyFamilyService extends Service {
     private void connectSocket(){
     	if( false == networkConnection() ){
             if( null != observer ){
-          	  observer.networkConnectionDisabled();
+          	  observer.socketConnectionStatusChanged( NetworkStatus.NO_CONNECTION );
             }
     		return;
     	}
@@ -78,22 +76,23 @@ public class MapMyFamilyService extends Service {
                        @Override
                        public void onOpen() {
                           if( null != observer ){
-                        	  observer.socketConnectionStatusChanged( "Connected ");
+                        	  observer.socketConnectionStatusChanged( NetworkStatus.CONNECTED );
                           }
+                          // TODO: send identification data to the server
                        }
             
                        @Override
                        public void onTextMessage(String payload) {
-                           if( null != observer && payload.startsWith("mapmyfamily.Location")){
+                           if( null != observer ){
                          	   // TODO: response from server?
-                        	   //observer.locationSentToServer();
+                        	   observer.messageReceived( payload );
                            }
                        }
             
                        @Override
                        public void onClose(int code, String reason) {
                            if( null != observer ){
-                         	  observer.socketConnectionStatusChanged( "Closed ");
+                         	  observer.socketConnectionStatusChanged( NetworkStatus.CLOSED );
                            }
                        }
                    });
@@ -123,7 +122,10 @@ public class MapMyFamilyService extends Service {
          }
     }
 
-	
+	/**
+	 * Send data to the server
+	 * @param message
+	 */
     protected void sendData( String message ) {
 
     	if ( mConnection == null || mConnection.isConnected() == false) {

@@ -2,10 +2,8 @@ package riikka.mapmyfamily;
 
 public interface ServiceObserver {
 	
-	public void socketConnectionStatusChanged( String status );
+	public void socketConnectionStatusChanged( NetworkStatus status );
 
-	public void networkConnectionDisabled();
-
-	public void locationSentToServer();
+	public void messageReceived(String payload);
 
 }

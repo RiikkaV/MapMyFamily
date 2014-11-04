@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="left"
+    android:orientation="vertical"
+    android:tag="locationFragment" >    
+
+<!--     CURRENT LOCATION -->
+    <TextView
+        android:id="@+id/locationPosText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/currentLocationHeader"
+        style="@style/headerText" />
+    
+    <TextView
+        android:id="@+id/currentLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/locationPosText"
+        android:text="@string/waitingForLocation" />
+ 
+<!-- TIME  -->
+    <TextView
+        android:id="@+id/currentLocationTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currentLocation"
+        android:text="@string/currentLocationTimeHeader"
+        style="@style/headerText" />
+    
+    <TextView
+        android:id="@+id/LocationDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/currentLocationTimeText"/>
+    
+        <TextView
+        android:id="@+id/locationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/accuracyText"
+        android:layout_below="@+id/currentLocationTimeText" />
+
+<!-- LOCATION PROVIDER -->
+    <TextView
+        android:id="@+id/currentLocationProviderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/LocationDate"
+        android:text="@string/currentLocationProviderHeader"
+        style="@style/headerText" />
+
+    <TextView
+        android:id="@+id/locationProvider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currentLocationProviderText" />
+
+<!--     ACCURACY -->
+    <TextView
+        android:id="@+id/currentLocationAccuracyText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_below="@+id/locationProvider"        
+		android:text="@string/currentLocationAccuracyHeader"
+        style="@style/headerText" />
+    
+    <TextView
+        android:id="@+id/accuracy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currentLocationAccuracyText"/>
+
+    <TextView
+        android:id="@+id/accuracyText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/accuracy"
+        android:layout_below="@+id/currentLocationAccuracyText" />
+
+
+
+</RelativeLayout>

@@ -3,13 +3,12 @@
     <string name="app_name">MapMyFamily</string>
     <string name="waitingForLocation">wait for location&#8230;</string>
     <string name="waitingForConnection">connecting&#8230;</string>
-    <string name="connected">connected</string>
     <string name="askToEnableNetworkConnection">Please, enable network connection</string>
     <string name="currentLocationHeader">YOUR LOCATION</string>
     <string name="currentLocationTimeHeader">TIME</string>
     <string name="currentLocationProviderHeader">LOCATION PROVIDER</string>
     <string name="currentLocationAccuracyHeader">ACCURACY</string>
-    <string name="accuracyMeters">meter</string>
+     <string name="accuracyMeters">meter</string>
     <string name="providerEnabled">enabled</string>
     <string name="providerDisabled">disabled</string>
     <string name="gpsLocationProvider">GPS</string>

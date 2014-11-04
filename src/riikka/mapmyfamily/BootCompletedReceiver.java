@@ -10,6 +10,9 @@ import android.util.Log;
  * 
  * BootCompletedReceiver class handles starting  of the MapMyFamilyService 
  * on Android boot. onReceive method is called when phone boot is completed.
+ * TODO:
+ * starts the process but current implementation actually requires activity
+ * 
  */
 public class BootCompletedReceiver extends BroadcastReceiver{
 	
@@ -20,15 +23,12 @@ public class BootCompletedReceiver extends BroadcastReceiver{
  
     	 if(intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED))
     	 {
-    		 // start the MapMyFamilyService            
-    		 Intent serviceIntent = new Intent(context, MapMyFamilyService.class);
-    		 context.startService(serviceIntent);
+    		 // start the MapMyFamilyActivity
+    		 Intent serviceIntent = new Intent(context, MapMyFamilyActivity.class);
+    		 serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    		 context.startActivity(serviceIntent);
     		 
     		 Log.d(LOG_TAG, "BootCompleted");
-    		 
-    		 // TODO: DO WE NEED THIS? ACTIVITY WILL INSTANTIATE location manager 
-    		 MapMyFamilyLocationManager locManager = new MapMyFamilyLocationManager( context );
-    		 locManager.StartTracking();
     	 }
      }
 }
