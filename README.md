@@ -4,6 +4,8 @@ This project is created for learning purposes and was carried out during the uni
 
 Repository contains so far only Android application.
 
+
+
 Changes 11/2014
 - starts the activity after phone boot
 - fragments (for small layouts tabs to navigate between fragments)
