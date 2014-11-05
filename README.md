@@ -12,6 +12,7 @@ Changes 11/2014
 - new layouts (outlook/information)
 - localized strings (en/fi)
 - supports only portrait orientation
+- spinning progress bar for location data and server connection
 
 TODO
 - more information for network info tab (last connection to the server)

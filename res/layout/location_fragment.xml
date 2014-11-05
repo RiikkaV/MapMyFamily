@@ -18,8 +18,7 @@
         android:id="@+id/currentLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationPosText"
-        android:text="@string/waitingForLocation" />
+        android:layout_below="@+id/locationPosText"/>
  
 <!-- TIME  -->
     <TextView
@@ -81,6 +80,12 @@
         android:layout_toRightOf="@+id/accuracy"
         android:layout_below="@+id/currentLocationAccuracyText" />
 
-
+    <ProgressBar
+        android:id="@+id/progressSpinner"
+        style="@android:style/Widget.ProgressBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/currentLocationTimeText"
+        android:layout_toRightOf="@+id/LocationDate" />
 
 </RelativeLayout>

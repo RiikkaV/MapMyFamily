@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -32,10 +33,12 @@ public class NetworkFragment extends Fragment {
 	    	}
 	    	break;
 	    	case CONNECTED:{
+	    		removeProgressBar();
 	    		text = (String) getActivity().getString( R.string.connected );
 	    	}
 	    	break;
 	    	case NO_CONNECTION:{
+	    		removeProgressBar();
 	    		text = (String) getActivity().getString( R.string.askToEnableNetworkConnection );
 	    	}
 	    	break;
@@ -51,6 +54,13 @@ public class NetworkFragment extends Fragment {
     	// TODO: do we need this?
     	//TextView connectionTime = (TextView) getActivity().findViewById( R.id.connectionTime );
     	
+    }
+    
+    private void removeProgressBar(){
+    	ProgressBar progressSpinner = (ProgressBar) getActivity().findViewById( R.id.progressSpinnerConnection );
+    	if( null != progressSpinner ){
+    		progressSpinner.setVisibility( ViewGroup.GONE );
+    	}
     }
 
 }

@@ -11,13 +11,21 @@
     <TextView
         android:id="@+id/connectionToServer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/waitingForConnection" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/connectionTime" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/connectionToServer"/>
+
+    <ProgressBar
+        android:id="@+id/progressSpinnerConnection"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connectionTime"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="84dp" />
 
 </RelativeLayout>

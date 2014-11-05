@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -28,7 +29,6 @@ public class LocationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-    	
         return inflater.inflate(R.layout.location_fragment, container, false);
     }
 
@@ -37,6 +37,12 @@ public class LocationFragment extends Fragment {
     }
     
     private void parseJSONMessage( JSONObject message ){
+    	
+    	ProgressBar progressSpinner = (ProgressBar) getActivity().findViewById( R.id.progressSpinner );
+    	if( null != progressSpinner ){
+    		progressSpinner.setVisibility( ViewGroup.GONE );
+    	}
+    	
         TextView locationPos = (TextView) getActivity().findViewById( R.id.currentLocation );
         TextView locationDate = (TextView) getActivity().findViewById( R.id.LocationDate );
         TextView locationTime = (TextView) getActivity().findViewById( R.id.locationTime);
